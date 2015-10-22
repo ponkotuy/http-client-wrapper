@@ -10,7 +10,7 @@ object HttpHelper extends HttpWrapper {
   override def cookie = Cookie.empty
 }
 
-case class Session(cookie: Cookie, res: Response) extends HttpWrapper
+case class Session(cookie: Cookie, res: Response, req: Request) extends HttpWrapper
 
 case class Cookie(raw: Map[String, String]) {
   override def toString: String = raw.map { case (k, v) => s"$k=$v" }.mkString(";")
@@ -105,7 +105,7 @@ trait HttpWrapper {
     println(req.contentType)
     printSummary(res)
     val cookie = res.header("Set-Cookie").map(Cookie.fromStr).getOrElse(Cookie.empty)
-    Session(cookie, res)
+    Session(cookie, res, req)
   }
 }
 

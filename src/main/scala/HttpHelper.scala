@@ -12,6 +12,7 @@ object HttpHelper extends HttpWrapper {
 
   implicit def toHost(str: String): Host = Host(str)
   implicit def toProtocol(str: String): Protocol = Protocol(str)
+  implicit def removeSession(session: Session): Response = session.res
 }
 
 case class Session(cookie: Cookie, res: Response, req: Request) extends HttpWrapper

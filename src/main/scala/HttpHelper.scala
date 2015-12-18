@@ -3,16 +3,7 @@ import skinny.http._
 import scala.collection.breakOut
 
 object HttpHelper extends HttpWrapper {
-  import scala.language.implicitConversions
-
   override def cookie = Cookie.empty
-
-  implicit var host: Host = Host("localhost")
-  implicit var protocol: Protocol = Protocol("http")
-
-  implicit def toHost(str: String): Host = Host(str)
-  implicit def toProtocol(str: String): Protocol = Protocol(str)
-  implicit def removeSession(session: Session): Response = session.res
 }
 
 case class Session(cookie: Cookie, res: Response, req: Request) extends HttpWrapper
@@ -40,3 +31,15 @@ case class HttpHelperException(mes: String) extends RuntimeException(mes)
 case class Host(name: String)
 
 case class Protocol(name: String)
+
+object Implicits {
+  import scala.language.implicitConversions
+
+  implicit var host: Host = Host("localhost")
+  implicit var protocol: Protocol = Protocol("http")
+
+  implicit def toHost(str: String): Host = Host(str)
+  implicit def toProtocol(str: String): Protocol = Protocol(str)
+  implicit def removeSession(session: Session): Response = session.res
+
+}

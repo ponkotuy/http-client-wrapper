@@ -16,6 +16,7 @@ object Cookie {
   def fromStr(str: String): Cookie = {
     val raw: Map[String, String] = str.split(';').flatMap { part =>
       part.trim.split('=') match {
+        case Array(k) => Some(k -> "")
         case Array(k, v) => Some(k -> v)
         case _ => None
       }

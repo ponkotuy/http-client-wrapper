@@ -10,62 +10,63 @@ trait HttpWrapper {
 
   def cookie: Cookie
 
-  def get(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def get(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
     request(Method.GET, req)
   }
 
-  def head(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def head(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
     request(Method.HEAD, req)
   }
 
-  def post(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def post(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).formParams(params:_*).header("Cookie", cookie.toString)
     request(Method.POST, req)
   }
 
-  def post(url: String, body: String)(implicit host: Host, protocol: Protocol): Session = {
+  def post(url: String, body: String)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).body(body.getBytes(StandardCharsets.UTF_8))
     request(Method.POST, req)
   }
 
-  def post(url: String, json: JValue)(implicit host: Host, protocol: Protocol): Session = {
+  def post(url: String, json: JValue)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).body(toBytes(json), "application/json; charset=utf-8")
     request(Method.POST, req)
   }
 
-  def put(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def put(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
     request(Method.PUT, req)
   }
 
-  def put(url: String, body: String)(implicit host: Host, protocol: Protocol): Session = {
+  def put(url: String, body: String)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).body(body.getBytes(StandardCharsets.UTF_8))
     request(Method.PUT, req)
   }
 
-  def put(url: String, json: JValue)(implicit host: Host, protocol: Protocol): Session = {
+  def put(url: String, json: JValue)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).body(toBytes(json), "application/json; charset=utf-8")
     request(Method.PUT, req)
   }
 
-  def delete(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def delete(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
     request(Method.DELETE, req)
   }
 
-  def options(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def options(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
     request(Method.OPTIONS, req)
   }
 
-  def trace(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol): Session = {
+  def trace(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
     request(Method.TRACE, req)
   }
 
-  def request(method: Method, req: Request): Session = {
+  def request(method: Method, req: Request)(implicit ua: UserAgent): Session = {
+    req.userAgent = Some(ua.name)
     def f(req: Request): Response = {
       val res = HTTP.request(method, req)
       if(res.status / 100 == 3) {

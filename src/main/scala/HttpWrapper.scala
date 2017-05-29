@@ -36,7 +36,7 @@ trait HttpWrapper {
   }
 
   def put(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).formParams(params:_*).header("Cookie", cookie.toString)
     request(Method.PUT, req)
   }
 

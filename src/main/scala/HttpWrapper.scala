@@ -8,20 +8,21 @@ import skinny.http._
 trait HttpWrapper {
   import HttpWrapper._
 
-  def cookie: Cookie
+  def headers: Map[String, String]
+  def addHeader(key: String, value: String): HttpWrapper
 
   def get(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).queryParams(params:_*)
     request(Method.GET, req)
   }
 
   def head(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).queryParams(params:_*)
     request(Method.HEAD, req)
   }
 
   def post(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).formParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).formParams(params:_*)
     request(Method.POST, req)
   }
 
@@ -36,7 +37,7 @@ trait HttpWrapper {
   }
 
   def put(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).formParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).formParams(params:_*)
     request(Method.PUT, req)
   }
 
@@ -51,35 +52,37 @@ trait HttpWrapper {
   }
 
   def delete(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).queryParams(params:_*)
     request(Method.DELETE, req)
   }
 
   def options(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).queryParams(params:_*)
     request(Method.OPTIONS, req)
   }
 
   def trace(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).queryParams(params:_*).header("Cookie", cookie.toString)
+    val req = Request(fixURL(url)).queryParams(params:_*)
     request(Method.TRACE, req)
   }
 
   def request(method: Method, req: Request)(implicit ua: UserAgent): Session = {
+    req.headers ++= headers
     req.userAgent = Some(ua.name)
     def f(req: Request): Response = {
       val res = HTTP.request(method, req)
       if(res.status / 100 == 3) {
         res.header("Location").map { loc =>
           f(req.copy(url = loc))
-        }.getOrElse(throw new HttpHelperException("Fail redirect"))
+        }.getOrElse(throw HttpHelperException("Fail redirect"))
       } else res
     }
     val res = f(req)
     println(req.contentType)
     printSummary(res)
     val cookie = res.header("Set-Cookie").map(Cookie.fromStr).getOrElse(Cookie.empty)
-    Session(cookie, res, req)
+    val newHeaders = headers.updated("Cookie", cookie.toString)
+    Session(res, req, newHeaders)
   }
 }
 

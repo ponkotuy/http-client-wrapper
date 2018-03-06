@@ -2,14 +2,27 @@
 import skinny.http._
 import scala.collection.breakOut
 
-object HttpHelper extends HttpWrapper {
-  override def cookie = Cookie.empty
+object HttpHelper extends WithHeader(Map.empty) {
+  def withBearer(auth: String): WithHeader = {
+    WithHeader(Map("Authorization" -> s"Bearer ${auth}"))
+  }
+
+  def withHeaders(headers: (String, String)*) = WithHeader(headers.toMap)
 }
 
-case class Session(cookie: Cookie, res: Response, req: Request) extends HttpWrapper
+case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {
+  def addHeader(key: String, value: String) =
+    Session(res, req, headers.updated(key, value))
+}
+
+case class WithHeader(headers: Map[String, String]) extends HttpWrapper {
+  override def addHeader(key: String, value: String) =
+    WithHeader(headers.updated(key, value))
+}
 
 case class Cookie(raw: Map[String, String]) {
   override def toString: String = raw.map { case (k, v) => s"$k=$v" }.mkString(";")
+  def header: (String, String) = "Cookie" -> toString
 }
 
 object Cookie {
@@ -46,5 +59,4 @@ object Implicits {
   implicit def toProtocol(str: String): Protocol = Protocol(str)
   implicit def toUserAgent(str: String): UserAgent = UserAgent(str)
   implicit def removeSession(session: Session): Response = session.res
-
 }

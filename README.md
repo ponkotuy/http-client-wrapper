@@ -19,6 +19,8 @@ get("/index.html") // use host settings
 protocol = "https"
 get("google.com", "q" -> "myfleet") // https protocol
 ua = "Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0" // set User-Agent
+withBearer("token").get(url) // use authorization bearer header
+withHeaders("key1" -> "value1", "key2" -> "value2").get(url) // use custom headers
 ```
 
 You can use get, post, head, put, delete, options and trace.

@@ -1,9 +1,9 @@
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.6"
 
 libraryDependencies ++= Seq(
-  "org.skinny-framework" %% "skinny-http-client" % "2.4.0",
-  "org.json4s" %% "json4s-native" % "3.5.3"
+  "org.skinny-framework" %% "skinny-http-client" % "3.0.0",
+  "org.json4s" %% "json4s-native" % "3.6.1"
 )
 
 initialCommands in console :=

@@ -1,5 +1,8 @@
 
+import org.json4s._
+import org.json4s.native.JsonMethods._
 import skinny.http._
+
 import scala.collection.breakOut
 
 object HttpHelper extends WithHeader(Map.empty) {
@@ -13,6 +16,8 @@ object HttpHelper extends WithHeader(Map.empty) {
 case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {
   def addHeader(key: String, value: String) =
     Session(res, req, headers.updated(key, value))
+
+  def json: JValue = parse(new String(res.body))
 }
 
 case class WithHeader(headers: Map[String, String]) extends HttpWrapper {

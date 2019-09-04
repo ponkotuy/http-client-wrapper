@@ -86,7 +86,7 @@ trait HttpWrapper {
     Session(res, req, newHeaders)
   }
 
-  def encode(str: String): String = URLEncoder.encode(str)
+  def encode(str: String): String = URLEncoder.encode(str, "UTF-8")
 }
 
 object HttpWrapper {

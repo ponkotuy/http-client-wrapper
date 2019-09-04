@@ -3,8 +3,6 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import skinny.http._
 
-import scala.collection.breakOut
-
 object HttpHelper extends WithHeader(Map.empty) {
   def withBearer(auth: String): WithHeader = {
     WithHeader(Map("Authorization" -> s"Bearer ${auth}"))
@@ -38,7 +36,7 @@ object Cookie {
         case Array(k, v) => Some(k -> v)
         case _ => None
       }
-    }(breakOut)
+    }.toMap
     Cookie(raw)
   }
 

@@ -70,6 +70,7 @@ trait HttpWrapper {
   def request(method: Method, req: Request)(implicit ua: UserAgent): Session = {
     req.headers ++= headers
     req.userAgent = Some(ua.name)
+    req.readTimeoutMillis = 30000
     def f(req: Request): Response = {
       val res = HTTP.request(method, req)
       if(res.status / 100 == 3) {

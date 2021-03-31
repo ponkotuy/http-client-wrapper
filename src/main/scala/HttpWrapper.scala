@@ -68,6 +68,7 @@ trait HttpWrapper {
   }
 
   def request(method: Method, req: Request)(implicit ua: UserAgent): Session = {
+    println(s"${method.name} ${req.url}")
     req.headers ++= headers
     req.userAgent = Some(ua.name)
     req.readTimeoutMillis = 30000

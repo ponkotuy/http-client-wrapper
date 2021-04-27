@@ -1,25 +1,33 @@
-
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import skinny.http._
+
+import java.net.URLEncoder
+import java.nio.file.{Files, Paths}
+import scala.jdk.CollectionConverters._
 
 object HttpHelper extends WithHeader(Map.empty) {
   def withBearer(auth: String): WithHeader = {
     WithHeader(Map("Authorization" -> s"Bearer ${auth}"))
   }
 
-  def withHeaders(headers: (String, String)*) = WithHeader(headers.toMap)
+  def withHeaders(headers: (String, String)*): WithHeader = WithHeader(headers.toMap)
+
+  def loadJson(fname: String): JValue =
+    parse(Files.readAllLines(Paths.get(fname)).asScala.mkString(""))
+
+  def encode(str: String): String = URLEncoder.encode(str, "UTF-8")
 }
 
 case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {
-  def addHeader(key: String, value: String) =
+  def addHeader(key: String, value: String): Session =
     Session(res, req, headers.updated(key, value))
 
   def json: JValue = parse(new String(res.body))
 }
 
 case class WithHeader(headers: Map[String, String]) extends HttpWrapper {
-  override def addHeader(key: String, value: String) =
+  override def addHeader(key: String, value: String): WithHeader =
     WithHeader(headers.updated(key, value))
 }
 
@@ -40,7 +48,7 @@ object Cookie {
     Cookie(raw)
   }
 
-  def empty = Cookie(Map.empty)
+  def empty: Cookie = Cookie(Map.empty)
 }
 
 case class HttpHelperException(mes: String) extends RuntimeException(mes)

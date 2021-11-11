@@ -1,9 +1,9 @@
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.7"
 
 libraryDependencies ++= Seq(
   "org.skinny-framework" %% "skinny-http-client" % "3.1.0",
-  "org.json4s" %% "json4s-native" % "3.6.11"
+  "org.json4s" %% "json4s-native" % "4.0.3"
 )
 
 scalacOptions ++= "-deprecation" :: "-feature" :: "-Xlint" :: "-Ywarn-unused:-imports,_" :: Nil

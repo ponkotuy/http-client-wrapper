@@ -17,6 +17,8 @@ object HttpHelper extends WithHeader(Map.empty) {
     parse(Files.readAllLines(Paths.get(fname)).asScala.mkString(""))
 
   def encode(str: String): String = URLEncoder.encode(str, "UTF-8")
+
+  def pretty(json: JValue) = org.json4s.native.prettyJson(render(json))
 }
 
 case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {

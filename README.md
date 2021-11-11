@@ -14,6 +14,7 @@ val session = post("hoge.com/session", ("username" -> "ponkotuy") ~ ("password" 
 session.get("hoge.com/image/1") // get with cookies
 session.status // => 200 use skinny.http.Response method if not exists method
 session.json // get JSON Response
+pretty(session.json) // get pretty JSON
 post("hoge.com/session", loadJson("filename.json")) // loadJson load JSON files
 get("myfleet.moe").res // get raw Response
 host = "ponkotuy.com"

@@ -1,10 +1,9 @@
 
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import skinny.http._
+
+import java.nio.charset.StandardCharsets
 
 trait HttpWrapper {
   import HttpWrapper._
@@ -87,8 +86,6 @@ trait HttpWrapper {
     val newHeaders = headers.updated("Cookie", cookie.toString)
     Session(res, req, newHeaders)
   }
-
-  def encode(str: String): String = URLEncoder.encode(str, "UTF-8")
 }
 
 object HttpWrapper {

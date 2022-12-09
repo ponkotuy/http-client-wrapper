@@ -4,9 +4,12 @@ import skinny.http._
 
 import java.net.URLEncoder
 import java.nio.file.{Files, Paths}
+import java.util.Base64
 import scala.jdk.CollectionConverters._
 
 object HttpHelper extends WithHeader(Map.empty) {
+  val DefaultEncode = "UTF-8"
+
   def withBearer(auth: String): WithHeader = {
     WithHeader(Map("Authorization" -> s"Bearer ${auth}"))
   }
@@ -17,12 +20,12 @@ object HttpHelper extends WithHeader(Map.empty) {
     str.lines.foreach(println)
   }
 
-  def withHeaders(headers: (String, String)*): WithHeader = WithHeader(headers.toMap)
-
   def loadJson(fname: String): JValue =
     parse(Files.readAllLines(Paths.get(fname)).asScala.mkString(""))
 
-  def encode(str: String): String = URLEncoder.encode(str, "UTF-8")
+  def encode(str: String): String = URLEncoder.encode(str, DefaultEncode)
+
+  def base64(str: String): String = Base64.getEncoder.encodeToString(str.getBytes(DefaultEncode))
 
   def pretty(json: JValue) = org.json4s.native.prettyJson(render(json))
 }

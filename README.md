@@ -23,6 +23,7 @@ ua = "Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0" // s
 withBearer("token").get(url) // use authorization bearer header
 withHeaders("key1" -> "value1", "key2" -> "value2").get(url) // use custom headers
 get("google.com", "q" -> encode("日本語とか?とかをエンコードできます"))
+printLines(get("google.com", q -> "myfleet").string) // print all result body
 ```
 
 You can use get, post, head, put, delete, options and trace.

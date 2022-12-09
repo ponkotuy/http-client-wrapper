@@ -9,13 +9,19 @@ object HttpHelper extends WithHeader(Map.empty) {
   }
 
   def withHeaders(headers: (String, String)*) = WithHeader(headers.toMap)
+
+  def printLines(str: String): Unit = {
+    str.lines.foreach(println)
+  }
 }
 
 case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {
-  def addHeader(key: String, value: String) =
+  def addHeader(key: String, value: String): Session =
     Session(res, req, headers.updated(key, value))
 
   def json: JValue = parse(new String(res.body))
+
+  def string: String = new String(res.body)
 }
 
 case class WithHeader(headers: Map[String, String]) extends HttpWrapper {

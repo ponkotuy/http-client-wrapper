@@ -36,6 +36,11 @@ trait HttpWrapper {
     request(Method.POST, req)
   }
 
+  def postMultipart(url: String, data: FormData*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
+    val req = Request(fixURL(url)).multipartFormData(data)
+    request(Method.POST, req)
+  }
+
   def put(url: String, params: (String, String)*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
     val req = Request(fixURL(url)).formParams(params:_*)
     request(Method.PUT, req)

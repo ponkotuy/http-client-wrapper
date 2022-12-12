@@ -1,14 +1,14 @@
 
-scalaVersion := "2.13.7"
+scalaVersion := "2.13.10"
 
 libraryDependencies ++= Seq(
-  "org.skinny-framework" %% "skinny-http-client" % "3.1.0",
-  "org.json4s" %% "json4s-native" % "4.0.3"
+  "org.skinny-framework" %% "skinny-http-client" % "4.0.0",
+  "org.json4s" %% "json4s-native" % "4.0.6"
 )
 
 scalacOptions ++= "-deprecation" :: "-feature" :: "-Xlint" :: "-Ywarn-unused:-imports,_" :: Nil
 
-initialCommands in console :=
+console / initialCommands :=
   """
   import skinny.http._
   import Implicits._

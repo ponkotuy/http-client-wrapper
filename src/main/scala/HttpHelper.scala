@@ -1,7 +1,8 @@
 import org.json4s._
 import org.json4s.native.JsonMethods._
-import skinny.http._
+import skinny.http.{FileInput => SkinnyFileInput, _}
 
+import java.io.File
 import java.net.URLEncoder
 import java.nio.file.{Files, Paths}
 import java.util.Base64
@@ -17,7 +18,7 @@ object HttpHelper extends WithHeader(Map.empty) {
   def withHeaders(headers: (String, String)*) = WithHeader(headers.toMap)
 
   def printLines(str: String): Unit = {
-    str.lines.foreach(println)
+    str.linesIterator.foreach(println)
   }
 
   def loadJson(fname: String): JValue =
@@ -27,7 +28,16 @@ object HttpHelper extends WithHeader(Map.empty) {
 
   def base64(str: String): String = Base64.getEncoder.encodeToString(str.getBytes(DefaultEncode))
 
-  def pretty(json: JValue) = org.json4s.native.prettyJson(render(json))
+  def pretty(json: JValue): String = org.json4s.native.prettyJson(render(json))
+
+  def file(first: String, rest: String*): SkinnyFileInput = {
+    val path = Paths.get(first, rest:_*)
+    val contentType = Files.probeContentType(path)
+    SkinnyFileInput(path.toFile, contentType)
+  }
+
+  def form(key: String, input: SkinnyFileInput): FormData = FormData(key, input)
+  def form(key: String, input: String): FormData = FormData(key, TextInput(input))
 }
 
 case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {

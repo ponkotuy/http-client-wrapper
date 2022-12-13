@@ -50,6 +50,8 @@ get("myfleet.moe").res // get raw Response
 - encode
 - base64
 - pretty
+- file
+- form
 
 ```scala
 post("hoge.com/session", loadJson("filename.json")) // loadJson load JSON files
@@ -57,6 +59,7 @@ withBearer("token").get(url) // use authorization bearer header
 withHeaders("key1" -> "value1", "key2" -> "value2").get(url) // use custom headers
 get("google.com", "q" -> encode("日本語とか?とかをエンコードできます"))
 printLines(get("google.com", q -> "myfleet").string) // print all result body
+postMultipart("hoge.com/person", form("key1", "value"), form("key2", file("fuga"))) // post multipart/form-data
 ```
 
 ### Helper states
@@ -74,7 +77,7 @@ ua = "Mozilla/5.0 (X11; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0" // s
 
 ### Supported HTTP methods
 - GET
-- POST
+- POST(post / postMultipart)
 - HEAD
 - PUT
 - DELETE

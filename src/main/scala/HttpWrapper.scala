@@ -2,7 +2,9 @@
 import org.json4s._
 import org.json4s.native.JsonMethods._
 import skinny.http._
+import skinny.util.LoanPattern.using
 
+import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
 trait HttpWrapper {
@@ -37,7 +39,10 @@ trait HttpWrapper {
   }
 
   def postMultipart(url: String, data: FormData*)(implicit host: Host, protocol: Protocol, ua: UserAgent): Session = {
-    val req = Request(fixURL(url)).multipartFormData(data)
+    val boundary = s"HTTPClientWrapper-${System.currentTimeMillis()}"
+    val body = genMultipartBody(boundary, data)
+    val req = Request(fixURL(url))
+      .body(body, s"multipart/form-data; boundary=$boundary")
     request(Method.POST, req)
   }
 
@@ -108,4 +113,35 @@ object HttpWrapper {
   }
 
   private def toBytes(json: JValue): Array[Byte] = pretty(render(json)).getBytes(StandardCharsets.UTF_8)
+
+  private[this] val CRLF = "\r\n"
+  private def genMultipartBody(boundary: String, xs: Seq[FormData]): Array[Byte] = {
+    using(new ByteArrayOutputStream) { out =>
+      xs.foreach { data => {
+        val sb = new StringBuilder
+        sb.append("--").append(boundary).append(CRLF)
+        sb.append("Content-Disposition: form-data; name=").append('"').append(data.name).append('"')
+        data.filename.foreach { name =>
+          sb.append("; filename=").append('"').append(name).append('"')
+        }
+        sb.append(CRLF)
+        data.contentType.foreach { contentType =>
+          sb.append("content-type: ").append(contentType).append(CRLF)
+        }
+        sb.append(CRLF)
+        out.write(sb.toString.getBytes)
+      }
+        Option(data.asBytes).foreach { bytes =>
+          bytes.indices.foreach { i =>
+            out.write(bytes(i))
+          }
+        }
+        out.write(CRLF.getBytes)
+      }
+      val sb = new StringBuilder
+      sb.append("--").append(boundary).append("--").append(CRLF)
+      out.write(sb.toString.getBytes)
+      out.toByteArray
+    }
+  }
 }

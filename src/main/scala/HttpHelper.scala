@@ -28,6 +28,7 @@ object HttpHelper extends WithHeader(Map.empty) {
   def base64(str: String): String = Base64.getEncoder.encodeToString(str.getBytes(DefaultEncode))
 
   def pretty(json: JValue): String = org.json4s.native.prettyJson(render(json))
+  def prettyAll(json: JValue): Unit = println(org.json4s.native.prettyJson(render(json)))
 
   def file(first: String, rest: String*): SkinnyFileInput = {
     val path = Paths.get(first, rest:_*)

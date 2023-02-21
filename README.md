@@ -38,6 +38,7 @@ session.get("hoge.com/image/1") // get with cookies
 session.status // => 200 use skinny.http.Response method if not exists method
 session.json // get JSON Response
 pretty(session.json) // get pretty JSON
+prettyAll(session.json) // print all pretty JSON (return Unit)
 get("myfleet.moe").res // get raw Response
 ```
 
@@ -50,16 +51,17 @@ get("myfleet.moe").res // get raw Response
 - encode
 - base64
 - pretty
+- prettyAll
 - file
 - form
 
 ```scala
-post("hoge.com/session", loadJson("filename.json")) // loadJson load JSON files
+post("hoge.com/session", loadJson("filename.json")) // loadJson is loading JSON files
 withBearer("token").get(url) // use authorization bearer header
 withHeaders("key1" -> "value1", "key2" -> "value2").get(url) // use custom headers
 get("google.com", "q" -> encode("日本語とか?とかをエンコードできます"))
 printLines(get("google.com", q -> "myfleet").string) // print all result body
-postMultipart("hoge.com/person", form("key1", "value"), form("key2", file("fuga"))) // post multipart/form-data
+postMultipart("hoge.com/person", form("key1", "value"), form("key2", file("fuga.jpg"))) // post multipart/form-data
 ```
 
 ### Helper states

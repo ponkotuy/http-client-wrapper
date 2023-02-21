@@ -2,7 +2,6 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 import skinny.http.{FileInput => SkinnyFileInput, _}
 
-import java.io.File
 import java.net.URLEncoder
 import java.nio.file.{Files, Paths}
 import java.util.Base64
@@ -38,6 +37,9 @@ object HttpHelper extends WithHeader(Map.empty) {
 
   def form(key: String, input: SkinnyFileInput): FormData = FormData(key, input)
   def form(key: String, input: String): FormData = FormData(key, TextInput(input))
+  def form(key: String, input: Int): FormData = FormData(key, TextInput(input.toString))
+  def form(key: String, input: Long): FormData = FormData(key, TextInput(input.toString))
+  def form(key: String, input: Double): FormData = FormData(key, TextInput(input.toString))
 }
 
 case class Session(res: Response, req: Request, headers: Map[String, String]) extends HttpWrapper {
